@@ -1,6 +1,8 @@
 server:
   port: 8080
 spring:
+  application:
+    name: SpringMicroservice
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
