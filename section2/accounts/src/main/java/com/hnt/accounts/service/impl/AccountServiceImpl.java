@@ -17,7 +17,6 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
 
@@ -42,8 +41,6 @@ public class AccountServiceImpl implements IAccountService {
         if (optionalCustomer.isPresent()) {
             throw new CustomerExistedException("Customer already existed with mobile number: " + customerDto.getMobileNumber());
         }
-        customer.setCreatedAt(LocalDateTime.now());
-        customer.setCreatedBy("Anonymous");
         Customer newCustomer = customerRepository.save(customer);
         accountRepository.save(createNewAccount(newCustomer));
     }
@@ -122,8 +119,6 @@ public class AccountServiceImpl implements IAccountService {
         newAccount.setAccountNumber(randomAccNumber);
         newAccount.setAccountType(Constants.SAVINGS);
         newAccount.setBranchAddress(Constants.ADDRESS);
-        newAccount.setCreatedAt(LocalDateTime.now());
-        newAccount.setCreatedBy("Anonymous");
         return newAccount;
     }
 
