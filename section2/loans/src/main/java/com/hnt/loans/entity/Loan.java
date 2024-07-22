@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "loans")
-public class Loan {
+public class Loan extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long loanId;

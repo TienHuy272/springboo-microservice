@@ -8,6 +8,7 @@ import com.hnt.loans.exception.ResourceNotFoundException;
 import com.hnt.loans.mapper.LoanMapper;
 import com.hnt.loans.repository.LoanRepository;
 import com.hnt.loans.service.ILoanService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,7 @@ public class LoanServiceImpl implements ILoanService {
      * @param mobileNumber - Mobile Number of the Customer
      */
     @Override
+    @Transactional(rollbackOn = Exception.class)
     public void createLoan(String mobileNumber) {
         Optional<Loan> optionalLoans= loanRepository.findByMobileNumber(mobileNumber);
         if(optionalLoans.isPresent()){
@@ -67,6 +69,7 @@ public class LoanServiceImpl implements ILoanService {
      * @return boolean indicating if the update of loan details is successful or not
      */
     @Override
+    @Transactional(rollbackOn = Exception.class)
     public boolean updateLoan(LoanDto loanDto) {
         Loan loans = loanRepository.findByLoanNumber(loanDto.getLoanNumber()).orElseThrow(
                 () -> new ResourceNotFoundException("Loan", "LoanNumber", loanDto.getLoanNumber()));
