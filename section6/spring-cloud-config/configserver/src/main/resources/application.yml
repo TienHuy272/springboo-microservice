@@ -8,6 +8,8 @@ spring:
       server:
         native:
           search-locations: "classpath:/config"
+encrypt:
+  key: "spring-microservices-2024"
 
 server:
   port: 8071

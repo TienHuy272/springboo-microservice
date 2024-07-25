@@ -2,10 +2,10 @@ build:
   version: "1.0"
 
 accounts:
-  message: "Welcome to VCB accounts related prod APIs "
+  message: "Welcome to VCB accounts related prod APIs (encrypted)"
   contactDetails:
     name: "HNT - Developer"
-    email: "hnt@guru.com"
+    email: "{cipher}7963c25b09fbd0cd3289fab87f7a121df9a1a2151445e5e95c70d1c4331f660f"
   onCallSupport:
     - (999) 555-1234
     - (999) 523-1345
