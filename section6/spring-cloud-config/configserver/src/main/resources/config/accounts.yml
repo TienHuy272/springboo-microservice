@@ -1,0 +1,11 @@
+build:
+  version: "3.0"
+
+accounts:
+  message: "Welcome to VCB accounts related local APIs "
+  contactDetails:
+    name: "HNT - Developer"
+    email: "hnt@guru.com"
+  onCallSupport:
+    - (999) 555-1234
+    - (999) 523-1345
