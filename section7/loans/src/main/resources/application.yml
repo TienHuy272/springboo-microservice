@@ -6,9 +6,10 @@ spring:
   profiles:
     active: "prod"
   datasource:
-    url: jdbc:mysql://localhost:3309/loans
+    url: jdbc:mysql://127.0.0.1:3309/loans
     username: root
     password: root
+    driver-class-name: com.mysql.jdbc.Driver
   jpa:
     show-sql: true
   sql:
