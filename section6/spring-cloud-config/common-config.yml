@@ -1,0 +1,22 @@
+services:
+  network-deploy-service:
+    networks:
+      - bridgeNetwork
+
+  microservice-base-config:
+    extends:
+      service: network-deploy-service
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+          
+  microservice-configserver-config:
+    extends:
+      service: microservice-base-config
+    depend_on:
+      configserver:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: "configserver:http://configservre:8071/"
