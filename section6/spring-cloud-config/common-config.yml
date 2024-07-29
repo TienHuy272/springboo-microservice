@@ -10,13 +10,12 @@ services:
       resources:
         limits:
           memory: 700m
-          
+    environment:
+      SPRING_RABBITMQ_HOST: "rabbit"
+
   microservice-configserver-config:
     extends:
       service: microservice-base-config
-    depend_on:
-      configserver:
-        condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: default
-      SPRING_CONFIG_IMPORT: "configserver:http://configservre:8071/"
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
