@@ -6,3 +6,5 @@ cd ../cards
 sudo ./gradlew bootJar
 cd ../accounts
 sudo ./gradlew bootJar
+
+
