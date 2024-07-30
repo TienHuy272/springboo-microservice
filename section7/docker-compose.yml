@@ -75,7 +75,7 @@ services:
     ports:
       - "8090:8090"
     environment:
-      SPRING_APPLICATION_NAME: "accounts"
+      SPRING_APPLICATION_NAME: "loans"
       SPRING_DATASOURCE_URL: "jdbc:mysql://loansdb:3306/loansdb"
     depends_on:
       loansdb:
