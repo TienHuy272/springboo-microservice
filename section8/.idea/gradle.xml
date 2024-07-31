@@ -33,6 +33,24 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/eureka.server" />
+        <option name="gradleJvm" value="17" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/eureka.server" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/eurekaserver" />
+        <option name="gradleJvm" value="17" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/eurekaserver" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/loans" />
         <option name="gradleHome" value="/opt/gradle/latest" />
         <option name="gradleJvm" value="17" />
