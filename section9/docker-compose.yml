@@ -3,7 +3,7 @@ services:
     build:
       context: ./configserver
       dockerfile: Dockerfile
-    image: "hnt/configserver:s8"
+    image: "hnt/configserver:s9"
     container_name: configserver-ms
     ports:
       - "8071:8071"
@@ -21,7 +21,7 @@ services:
     build:
       context: ./eurekaserver
       dockerfile: Dockerfile
-    image: "hnt/eurekaserver:s8"
+    image: "hnt/eurekaserver:s9"
     container_name: eurekaserver-ms
     ports:
       - "8070:8070"
@@ -44,7 +44,7 @@ services:
     build:
       context: ./accounts
       dockerfile: Dockerfile
-    image: "hnt/accounts:s8"
+    image: "hnt/accounts:s9"
     container_name: accounts-ms
     ports:
       - "8080:8080"
@@ -58,7 +58,7 @@ services:
     build:
       context: ./loans
       dockerfile: Dockerfile
-    image: "hnt/loans:s8"
+    image: "hnt/loans:s9"
     container_name: loans-ms
     ports:
       - "8090:8090"
@@ -72,7 +72,7 @@ services:
     build:
       context: ./cards
       dockerfile: Dockerfile
-    image: "hnt/cards:s8"
+    image: "hnt/cards:s9"
     container_name: cards-ms
     ports:
       - "9000:9000"
