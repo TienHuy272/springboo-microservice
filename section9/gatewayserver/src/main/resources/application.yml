@@ -23,5 +23,5 @@ management:
 info:
   app:
     name: "gatewayserver"
-    description: "Gateway Server ?"
+    description: "Gateway Server"
     version: "1.0.0"
