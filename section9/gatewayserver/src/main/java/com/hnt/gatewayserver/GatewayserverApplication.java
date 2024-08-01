@@ -18,7 +18,8 @@ public class GatewayserverApplication {
 	@Bean
 	public RouteLocator routeConfig(RouteLocatorBuilder builder) {
 		return builder.routes()
-					.route(p -> p.path("/hnt/accounts/**")
+					.route(p ->
+							p.path("/hnt/accounts/**")
 						.filters(f -> f.rewritePath("/hnt/accounts/(?<segment>.*)", "/${segment}")
 								.addRequestHeader("X-Response-Time", LocalDateTime.now().toString()))
 							.uri("lb://ACCOUNTS"))
