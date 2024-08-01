@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
         description = "CRUD REST API for Customer Desc."
 )
 @RestController
-@RequestMapping(path = "/api/customer/v1", produces = { MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(path = "/api/v1", produces = { MediaType.APPLICATION_JSON_VALUE})
 @Validated
 public class CustomerController {
 

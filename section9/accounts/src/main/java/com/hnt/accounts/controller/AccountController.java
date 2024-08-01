@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
         description = "CRUD REST API for Account Desc."
 )
 @RestController
-@RequestMapping(path = "/api/accounts/v1", produces = { MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(path = "/api/v1", produces = { MediaType.APPLICATION_JSON_VALUE})
 @Validated
 public class AccountController {
 
