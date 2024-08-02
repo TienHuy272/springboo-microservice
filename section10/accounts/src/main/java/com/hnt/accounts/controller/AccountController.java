@@ -198,10 +198,10 @@ public class AccountController {
     @GetMapping("/build-info")
     public ResponseEntity<String> getBuildInfo() {
         logger.debug("AccountController: Get BuildInfo() method invoked");
-        throw new NullPointerException();
-//        return ResponseEntity
-//                .status(HttpStatus.OK)
-//                .body(buildVersion);
+//        throw new NullPointerException();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(buildVersion);
     }
 
     /**
