@@ -233,6 +233,8 @@ public class LoanController {
     )
     @GetMapping("/contact-info")
     public ResponseEntity<LoanContactInfoDto> getContactInfo() {
+        logger.debug("Invoke loans contact-info");
+//        throw new RuntimeException("");
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(loanContactInfoDto);
