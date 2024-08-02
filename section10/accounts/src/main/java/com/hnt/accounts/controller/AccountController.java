@@ -26,6 +26,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.TimeoutException;
+
 
 @Tag(
         name = "CRUD REST API for Account",
@@ -198,7 +200,7 @@ public class AccountController {
     @GetMapping("/build-info")
     public ResponseEntity<String> getBuildInfo() {
         logger.debug("AccountController: Get BuildInfo() method invoked");
-//        throw new NullPointerException();
+//        throw new TimeoutException();
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(buildVersion);

@@ -41,11 +41,16 @@ public class GatewayserverApplication {
 					.route(p -> p.path("/hnt/cards/**")
 						.filters(f -> f.rewritePath("/hnt/cards/(?<segment>.*)", "/${segment}")
 								.addRequestHeader("X-Response-Time", LocalDateTime.now().toString()))
-							.uri("lb://CARDS"))
-				.build();
+								.uri("lb://LOANS")).build();
 
 	}
 
+	/**
+	 * Setting timeout duration circuitbreaker to reach
+	 * compare with resilience4j.retry time
+	 * if retry time smaller than circuitbreaker fallback method will be executed
+	 * @return
+	 */
 	@Bean
 	public Customizer<ReactiveResilience4JCircuitBreakerFactory> defaultCustomizer() {
 		return factory -> factory.configureDefault(id -> new Resilience4JConfigBuilder(id)
