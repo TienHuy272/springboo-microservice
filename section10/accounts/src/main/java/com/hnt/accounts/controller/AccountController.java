@@ -6,6 +6,7 @@ import com.hnt.accounts.dto.CustomerDto;
 import com.hnt.accounts.dto.ErrorResponseDto;
 import com.hnt.accounts.dto.ResponseDto;
 import com.hnt.accounts.service.IAccountService;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,6 +15,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -32,6 +35,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/api/v1", produces = { MediaType.APPLICATION_JSON_VALUE})
 @Validated
 public class AccountController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AccountController.class);
 
     private final IAccountService accountService;
 
@@ -189,11 +194,28 @@ public class AccountController {
             )
     }
     )
+    @Retry(name = "getBuildInfo", fallbackMethod = "getBuildFallback")
     @GetMapping("/build-info")
     public ResponseEntity<String> getBuildInfo() {
+        logger.debug("AccountController: Get BuildInfo() method invoked");
+        throw new NullPointerException();
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(buildVersion);
+    }
+
+    /**
+     * Same signature with getBuildInfo and Throwable value
+     * ex getBuildInfo(arg1, arg2) => fallback (arg1, arg2, throwable)
+     * will be call when getBuildInfo retry call can not return a response
+     * @param throwable
+     * @return
+     */
+    public ResponseEntity<String> getBuildFallback(Throwable throwable) {
+        logger.debug("AccountController: Get getBuildFallback() method invoked");
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(buildVersion);
+                .body("0.9");
     }
 
     @Operation(
