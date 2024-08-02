@@ -21,7 +21,8 @@ public class GatewayserverApplication {
 					.route(p ->
 							p.path("/hnt/accounts/**")
 						.filters(f -> f.rewritePath("/hnt/accounts/(?<segment>.*)", "/${segment}")
-								.addRequestHeader("X-Response-Time", LocalDateTime.now().toString()))
+								.addRequestHeader("X-Response-Time", LocalDateTime.now().toString())
+								.circuitBreaker(config -> config.setName("accountsCircuitBreaker")))
 							.uri("lb://ACCOUNTS"))
 					.route(p -> p.path("/hnt/loans/**")
 						.filters(f -> f.rewritePath("/hnt/loans/(?<segment>.*)", "/${segment}")
