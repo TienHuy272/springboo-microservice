@@ -1,0 +1,11 @@
+# To test ratelimiter
+0. install docker redis
+    docker run -p 6379:6379 --name spring-redis -d redis
+1. install apache benchmark
+    brew install httpd
+2. execute command prompt
+     ab -n 10 -c 2 -v 3 http://localhost:8072/hnt/cards/api/v1/contact-info
+
+    # -n 10 send 10 requests
+    # -c 2 send in two concurrent thread
+    # -v 3 send with value is 3 indicate i want to see detail report in output

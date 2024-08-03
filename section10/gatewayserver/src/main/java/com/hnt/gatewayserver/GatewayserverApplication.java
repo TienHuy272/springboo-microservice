@@ -7,10 +7,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.circuitbreaker.resilience4j.ReactiveResilience4JCircuitBreakerFactory;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JConfigBuilder;
 import org.springframework.cloud.client.circuitbreaker.Customizer;
+import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
+import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -40,7 +43,10 @@ public class GatewayserverApplication {
 							.uri("lb://LOANS"))
 					.route(p -> p.path("/hnt/cards/**")
 						.filters(f -> f.rewritePath("/hnt/cards/(?<segment>.*)", "/${segment}")
-								.addRequestHeader("X-Response-Time", LocalDateTime.now().toString()))
+								.addRequestHeader("X-Response-Time", LocalDateTime.now().toString())
+								.requestRateLimiter(requestConfig ->
+										requestConfig.setRateLimiter(redisRateLimiter()).setKeyResolver(userKeyResolver())
+								))
 								.uri("lb://LOANS")).build();
 
 	}
@@ -57,5 +63,24 @@ public class GatewayserverApplication {
 				.circuitBreakerConfig(CircuitBreakerConfig.ofDefaults())
 				.timeLimiterConfig(TimeLimiterConfig.custom().timeoutDuration(Duration.ofSeconds(4)).build()).build());
 	}
+
+	/**
+	 * RedisRateLimiter(
+	 * first arg: number of tokens add per second,
+	 * second arg: max-number-token can be hold ,
+	 * third arg: number of token required per request)
+	 * @return
+	 */
+	@Bean
+	public RedisRateLimiter redisRateLimiter() {
+		return new RedisRateLimiter(6, 6, 2);
+	}
+
+	@Bean
+	KeyResolver userKeyResolver() {
+		return exchange -> Mono.justOrEmpty(exchange.getRequest().getHeaders().getFirst("user"))
+				.defaultIfEmpty("anonymous");
+	}
+
 
 }
