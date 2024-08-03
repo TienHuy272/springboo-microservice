@@ -88,3 +88,14 @@ resilience4j.retry:
         - java.lang.NullPointerException  # not retry when meet Null Pointer exception
       retryExceptions:  # when define retryExceptions don't define ignoreExceptions
         - java.util.concurrent.TimeoutException  #only retry when meet Null Pointer exception
+
+resilience4j.ratelimiter:
+  configs:
+    default:
+      timeoutDuration: 1000 # max time can wait to refresh period
+      limitRefreshPeriod: 5000 # every 5 second refresh quota
+      limitForPeriod: 1 # every 5 seconds 1 request allowed
+
+#Every 5 seconds (limitRefreshPeriod = 5000 ms), the rate limiter will allow 1 request to pass through (limitForPeriod = 1).
+#If a request arrives when there are no permissions available, it will wait for up to 1 second (timeoutDuration = 1000 ms) to acquire a permission.
+#If a permission is not available within 1 second, the request will be denied, and a RequestNotPermitted exception will be thrown.
