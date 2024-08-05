@@ -308,7 +308,7 @@ services:
     build:
       context: ./cards
       dockerfile: Dockerfile
-    image: "hnt/cards:s10"
+    image: "hnt/cards:s11"
     container_name: cards-ms
     ports:
       - "9000:9000"
