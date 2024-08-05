@@ -47,7 +47,7 @@ public class GatewayserverApplication {
 								.requestRateLimiter(requestConfig ->
 										requestConfig.setRateLimiter(redisRateLimiter()).setKeyResolver(userKeyResolver())
 								))
-								.uri("lb://LOANS")).build();
+								.uri("lb://CARDS")).build();
 
 	}
 
