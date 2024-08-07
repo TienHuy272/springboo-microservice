@@ -1,0 +1,104 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: "accounts"
+  profiles:
+    active: "prod"
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ''
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  config:
+    import: "optional:configserver:http://localhost:8071/"
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+  data:
+    redis:
+      connect-timeout: 2s
+      host: localhost
+      port: 6379
+      timeout: 1s
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+endpoints:
+  shutdown:
+    enabled: true
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
+
+info:
+  app:
+    name: "accounts"
+    description: "Account Microservice"
+    version: "1.0.0"
+
+logging:
+  level:
+    com:
+      hnt:
+        accounts: DEBUG
+
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      slidingWindowSize: 10
+      permittedNumberOfCallsInHalfOpenState: 2
+      failureRateThreshold: 50
+      waitDurationInOpenState: 10000
+
+resilience4j.retry:
+  configs:
+    default:
+      maxAttempts: 3
+      waitDuration: 500
+      enableExponentialBackoff: true
+      exponentialBackoffMultiplier: 2
+      ignoreExceptions:
+        - java.lang.NullPointerException  # not retry when meet Null Pointer exception
+      retryExceptions:  # when define retryExceptions don't define ignoreExceptions
+        - java.util.concurrent.TimeoutException  #only retry when meet Null Pointer exception
+
+resilience4j.ratelimiter:
+  configs:
+    default:
+      timeoutDuration: 1000 # max time can wait to refresh period
+      limitRefreshPeriod: 5000 # every 5 second refresh quota
+      limitForPeriod: 1 # every 5 seconds 1 request allowed
+
+#Every 5 seconds (limitRefreshPeriod = 5000 ms), the rate limiter will allow 1 request to pass through (limitForPeriod = 1).
+#If a request arrives when there are no permissions available, it will wait for up to 1 second (timeoutDuration = 1000 ms) to acquire a permission.
+#If a permission is not available within 1 second, the request will be denied, and a RequestNotPermitted exception will be thrown.
