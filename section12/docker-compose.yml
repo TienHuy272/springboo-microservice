@@ -1,4 +1,17 @@
 services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.1
+    container_name: keycloak
+    ports:
+      - "7080:8080"
+    environment:
+      KEYCLOAK_ADMIN: "admin"
+      KEYCLOAK_ADMIN_PASSWORD: "admin"
+    command: "start-dev"
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
   read:
     image: grafana/loki:3.0.0
     command: "-config.file=/etc/loki/config.yaml -target=read"
@@ -131,7 +144,6 @@ services:
       file: common-config.yml
       service: network-deploy-service
 
-
   gateway:
     image: nginx:latest
     depends_on:
@@ -206,7 +218,7 @@ services:
     build:
       context: ./configserver
       dockerfile: Dockerfile
-    image: "hnt/configserver:s11"
+    image: "hnt/configserver:s12"
     container_name: configserver-ms
     ports:
       - "8071:8071"
@@ -224,7 +236,7 @@ services:
     build:
       context: ./eurekaserver
       dockerfile: Dockerfile
-    image: "hnt/eurekaserver:s11"
+    image: "hnt/eurekaserver:s12"
     container_name: eurekaserver-ms
     ports:
       - "8070:8070"
@@ -247,10 +259,8 @@ services:
     build:
       context: ./accounts
       dockerfile: Dockerfile
-    image: "hnt/accounts:s11"
+    image: "hnt/accounts:s12"
     container_name: accounts-ms
-    ports:
-      - "8080:8080"
     healthcheck:
       test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
       interval: 10s
@@ -267,10 +277,8 @@ services:
     build:
       context: ./loans
       dockerfile: Dockerfile
-    image: "hnt/loans:s11"
+    image: "hnt/loans:s12"
     container_name: loans-ms
-    ports:
-      - "8090:8090"
     healthcheck:
       test: "curl --fail --silent localhost:8090/actuator/health/readiness | grep UP || exit 1"
       interval: 10s
@@ -283,11 +291,29 @@ services:
       file: common-config.yml
       service: microservice-eureka-config
 
+  cards:
+    build:
+      context: ./cards
+      dockerfile: Dockerfile
+    image: "hnt/cards:s12"
+    container_name: cards-ms
+    healthcheck:
+      test: "curl --fail --silent localhost:9000/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    environment:
+      SPRING_APPLICATION_NAME: "cards"
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
   gatewayserver:
     build:
       context: ./gatewayserver
       dockerfile: Dockerfile
-    image: "hnt/gatewayserver:s11"
+    image: "hnt/gatewayserver:s12"
     container_name: gatewayserver-ms
     ports:
       - "8072:8072"
@@ -300,29 +326,13 @@ services:
         condition: service_started
     environment:
       SPRING_APPLICATION_NAME: "gatewayserver"
+      OTEL_SERVICE_NAME: "gatewayserver"
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI: "http://keycloak:8080/realms/master/protocol/openid-connect/certs"
     extends:
       file: common-config.yml
       service: microservice-eureka-config
 
-  cards:
-    build:
-      context: ./cards
-      dockerfile: Dockerfile
-    image: "hnt/cards:s11"
-    container_name: cards-ms
-    ports:
-      - "9000:9000"
-    healthcheck:
-      test: "curl --fail --silent localhost:9000/actuator/health/readiness | grep UP || exit 1"
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 10s
-    environment:
-      SPRING_APPLICATION_NAME: "cards"
-    extends:
-      file: common-config.yml
-      service: microservice-eureka-config
+
 networks:
   bridgeNetwork:
     driver: "bridge"
