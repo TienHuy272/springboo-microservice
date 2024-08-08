@@ -10,3 +10,5 @@ cd ../eurekaserver
 sudo ./gradlew bootJar
 cd ../gatewayserver
 sudo ./gradlew bootJar
+cd ../message
+sudo ./gradlew bootJar

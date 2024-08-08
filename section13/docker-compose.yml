@@ -1,4 +1,21 @@
 services:
+  rabbit:
+    image: rabbitmq:3.13-management
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
+
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.1
     container_name: keycloak
@@ -218,7 +235,7 @@ services:
     build:
       context: ./configserver
       dockerfile: Dockerfile
-    image: "hnt/configserver:s12"
+    image: "hnt/configserver:s13"
     container_name: configserver-ms
     ports:
       - "8071:8071"
@@ -236,7 +253,7 @@ services:
     build:
       context: ./eurekaserver
       dockerfile: Dockerfile
-    image: "hnt/eurekaserver:s12"
+    image: "hnt/eurekaserver:s13"
     container_name: eurekaserver-ms
     ports:
       - "8070:8070"
@@ -259,7 +276,7 @@ services:
     build:
       context: ./accounts
       dockerfile: Dockerfile
-    image: "hnt/accounts:s12"
+    image: "hnt/accounts:s13"
     container_name: accounts-ms
     healthcheck:
       test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
@@ -267,8 +284,13 @@ services:
       timeout: 5s
       retries: 10
       start_period: 10s
+    depends_on:
+      rabbit:
+        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "accounts"
+      OTEL_SERVICE_NAME: "accounts"
+      SPRING_RABBITMQ_HOST: "rabbit"
     extends:
       file: common-config.yml
       service: microservice-eureka-config
@@ -277,7 +299,7 @@ services:
     build:
       context: ./loans
       dockerfile: Dockerfile
-    image: "hnt/loans:s12"
+    image: "hnt/loans:s13"
     container_name: loans-ms
     healthcheck:
       test: "curl --fail --silent localhost:8090/actuator/health/readiness | grep UP || exit 1"
@@ -295,7 +317,7 @@ services:
     build:
       context: ./cards
       dockerfile: Dockerfile
-    image: "hnt/cards:s12"
+    image: "hnt/cards:s13"
     container_name: cards-ms
     healthcheck:
       test: "curl --fail --silent localhost:9000/actuator/health/readiness | grep UP || exit 1"
@@ -309,11 +331,26 @@ services:
       file: common-config.yml
       service: microservice-eureka-config
 
+  message:
+    build:
+      context: ./message
+      dockerfile: Dockerfile
+    image: "hnt/message:s13"
+    container_name: message-ms
+    depends_on:
+      rabbit:
+        condition: service_healthy
+    environment:
+      SPRING_RABBITMQ_HOST: "rabbit"
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
   gatewayserver:
     build:
       context: ./gatewayserver
       dockerfile: Dockerfile
-    image: "hnt/gatewayserver:s12"
+    image: "hnt/gatewayserver:s13"
     container_name: gatewayserver-ms
     ports:
       - "8072:8072"
