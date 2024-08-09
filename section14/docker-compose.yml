@@ -1,20 +1,25 @@
 services:
-  rabbit:
-    image: rabbitmq:3.13-management
-    hostname: rabbitmq
+
+  kafka:
+    image: docker.io/bitnami/kafka:3.7
     ports:
-      - "5672:5672"
-      - "15672:15672"
-    healthcheck:
-      test: rabbitmq-diagnostics check_port_connectivity
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 5s
+      - "9092:9092"
+    volumes:
+      - "kafka_data:/bitnami"
+    environment:
+      # KRaft settings
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      # Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
     extends:
       file: common-config.yml
       service: network-deploy-service
-
 
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.1
@@ -235,7 +240,7 @@ services:
     build:
       context: ./configserver
       dockerfile: Dockerfile
-    image: "hnt/configserver:s13"
+    image: "hnt/configserver:s14"
     container_name: configserver-ms
     ports:
       - "8071:8071"
@@ -253,7 +258,7 @@ services:
     build:
       context: ./eurekaserver
       dockerfile: Dockerfile
-    image: "hnt/eurekaserver:s13"
+    image: "hnt/eurekaserver:s14"
     container_name: eurekaserver-ms
     ports:
       - "8070:8070"
@@ -276,7 +281,7 @@ services:
     build:
       context: ./accounts
       dockerfile: Dockerfile
-    image: "hnt/accounts:s13"
+    image: "hnt/accounts:s14"
     container_name: accounts-ms
     healthcheck:
       test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
@@ -290,7 +295,7 @@ services:
     environment:
       SPRING_APPLICATION_NAME: "accounts"
       OTEL_SERVICE_NAME: "accounts"
-      SPRING_RABBITMQ_HOST: "rabbit"
+      SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: "kafka:9092"
     extends:
       file: common-config.yml
       service: microservice-eureka-config
@@ -299,7 +304,7 @@ services:
     build:
       context: ./loans
       dockerfile: Dockerfile
-    image: "hnt/loans:s13"
+    image: "hnt/loans:s14"
     container_name: loans-ms
     healthcheck:
       test: "curl --fail --silent localhost:8090/actuator/health/readiness | grep UP || exit 1"
@@ -317,7 +322,7 @@ services:
     build:
       context: ./cards
       dockerfile: Dockerfile
-    image: "hnt/cards:s13"
+    image: "hnt/cards:s14"
     container_name: cards-ms
     healthcheck:
       test: "curl --fail --silent localhost:9000/actuator/health/readiness | grep UP || exit 1"
@@ -335,7 +340,7 @@ services:
     build:
       context: ./message
       dockerfile: Dockerfile
-    image: "hnt/message:s13"
+    image: "hnt/message:s14"
     container_name: message-ms
     depends_on:
       rabbit:
@@ -350,7 +355,7 @@ services:
     build:
       context: ./gatewayserver
       dockerfile: Dockerfile
-    image: "hnt/gatewayserver:s13"
+    image: "hnt/gatewayserver:s14"
     container_name: gatewayserver-ms
     ports:
       - "8072:8072"
@@ -369,6 +374,9 @@ services:
       file: common-config.yml
       service: microservice-eureka-config
 
+volumes:
+  kafka_data:
+    driver: local
 
 networks:
   bridgeNetwork:
