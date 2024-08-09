@@ -56,7 +56,7 @@ public class AccountServiceImpl implements IAccountService {
     private void sendCommunication(Account account, Customer customer) {
         var accountsMsgDto = new AccountMsgDto(account.getAccountNumber(), customer.getName(),
                 customer.getEmail(), customer.getMobileNumber());
-        log.info("Sending Communication request for the details: {}", accountsMsgDto);
+        log.info("STEP1: Sending Communication request for the details: {}", accountsMsgDto);
         var result = streamBridge.send("sendCommunication-out-0", accountsMsgDto);
         log.info("Is the Communication request successfully triggered ? : {}", result);
     }

@@ -15,7 +15,7 @@ public class AccountFunction {
     @Bean
     public Consumer<Long> updateCommunication(IAccountService iAccountService) {
         return accountNumber -> {
-            log.info("Updating communication number: {}", accountNumber.toString());
+            log.info("STEP4: Updating communication number: {}", accountNumber.toString());
             iAccountService.updateCommunicationStatus(accountNumber);
         };
     }
