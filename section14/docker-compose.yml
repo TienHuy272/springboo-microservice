@@ -289,9 +289,6 @@ services:
       timeout: 5s
       retries: 10
       start_period: 10s
-    depends_on:
-      rabbit:
-        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "accounts"
       OTEL_SERVICE_NAME: "accounts"
@@ -342,11 +339,8 @@ services:
       dockerfile: Dockerfile
     image: "hnt/message:s14"
     container_name: message-ms
-    depends_on:
-      rabbit:
-        condition: service_healthy
     environment:
-      SPRING_RABBITMQ_HOST: "rabbit"
+      SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS: "kafka:9092"
     extends:
       file: common-config.yml
       service: network-deploy-service
